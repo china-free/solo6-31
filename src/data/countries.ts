@@ -57,6 +57,8 @@ export const COUNTRIES: Country[] = [
   { code: "NZ", name: "新西兰", nameEn: "New Zealand", continent: "大洋洲" },
 ];
 
+export const TOTAL_COUNTRY_COUNT = COUNTRIES.length;
+
 export function shuffleArray<T>(array: T[]): T[] {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
@@ -64,10 +66,6 @@ export function shuffleArray<T>(array: T[]): T[] {
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
-}
-
-export function selectRandomCountries(count: number = 5): Country[] {
-  return shuffleArray(COUNTRIES).slice(0, count);
 }
 
 export function getFlagUrl(code: string): string {

@@ -1,37 +1,11 @@
 import { useEffect, useState } from "react";
 import { Trophy, Clock, Target, RotateCcw, Sparkles } from "lucide-react";
+import { formatTimeReadable, getRating, type GameStats } from "@/utils/gameEngine";
 
 interface ResultModalProps {
   show: boolean;
-  timeElapsed: number;
-  correctCount: number;
-  totalAttempts: number;
+  stats: GameStats;
   onRestart: () => void;
-}
-
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  if (mins > 0) {
-    return `${mins}分${secs}秒`;
-  }
-  return `${secs}秒`;
-}
-
-function getRating(accuracy: number, time: number): { emoji: string; text: string; color: string } {
-  if (accuracy === 100 && time < 15) {
-    return { emoji: "🏆", text: "地理大师！", color: "from-amber-400 to-yellow-500" };
-  }
-  if (accuracy === 100) {
-    return { emoji: "⭐", text: "完美表现！", color: "from-emerald-400 to-teal-500" };
-  }
-  if (accuracy >= 80) {
-    return { emoji: "🎯", text: "非常棒！", color: "from-sky-400 to-blue-500" };
-  }
-  if (accuracy >= 60) {
-    return { emoji: "👍", text: "做得不错！", color: "from-indigo-400 to-violet-500" };
-  }
-  return { emoji: "💪", text: "继续加油！", color: "from-rose-400 to-pink-500" };
 }
 
 const CONFETTI_COLORS = [
@@ -45,15 +19,14 @@ const CONFETTI_COLORS = [
 
 export default function ResultModal({
   show,
-  timeElapsed,
-  correctCount,
-  totalAttempts,
+  stats,
   onRestart,
 }: ResultModalProps) {
-  const [confetti, setConfetti] = useState<{ id: number; left: number; delay: number; duration: number; color: string }[]>([]);
+  const [confetti, setConfetti] = useState<
+    { id: number; left: number; delay: number; duration: number; color: string }[]
+  >([]);
 
-  const accuracy = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
-  const rating = getRating(accuracy, timeElapsed);
+  const rating = getRating(stats.accuracy, stats.timeElapsed);
 
   useEffect(() => {
     if (show) {
@@ -120,11 +93,9 @@ export default function ResultModal({
                     <Clock className="w-6 h-6 text-sky-400" />
                   </div>
                   <div className="text-left">
-                    <div className="text-white/50 text-sm font-medium">
-                      用时
-                    </div>
+                    <div className="text-white/50 text-sm font-medium">用时</div>
                     <div className="text-white font-bold text-lg">
-                      {formatTime(timeElapsed)}
+                      {formatTimeReadable(stats.timeElapsed)}
                     </div>
                   </div>
                 </div>
@@ -136,13 +107,11 @@ export default function ResultModal({
                     <Target className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div className="text-left">
-                    <div className="text-white/50 text-sm font-medium">
-                      正确率
-                    </div>
+                    <div className="text-white/50 text-sm font-medium">正确率</div>
                     <div className="text-white font-bold text-lg">
-                      {accuracy}%
+                      {stats.accuracy}%
                       <span className="text-white/40 text-sm ml-2">
-                        ({correctCount}/{totalAttempts}次尝试)
+                        ({stats.correctCount}/{stats.totalAttempts}次尝试)
                       </span>
                     </div>
                   </div>
@@ -155,11 +124,9 @@ export default function ResultModal({
                     <Trophy className="w-6 h-6 text-amber-400" />
                   </div>
                   <div className="text-left">
-                    <div className="text-white/50 text-sm font-medium">
-                      配对数
-                    </div>
+                    <div className="text-white/50 text-sm font-medium">配对数</div>
                     <div className="text-white font-bold text-lg">
-                      {correctCount} 个国家
+                      {stats.correctCount} 个国家
                     </div>
                   </div>
                 </div>

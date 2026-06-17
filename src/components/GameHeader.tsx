@@ -1,4 +1,5 @@
 import { Timer, Trophy, RotateCcw } from "lucide-react";
+import { formatTimeDisplay } from "@/utils/gameEngine";
 
 interface GameHeaderProps {
   timeElapsed: number;
@@ -7,19 +8,13 @@ interface GameHeaderProps {
   onRestart: () => void;
 }
 
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-}
-
 export default function GameHeader({
   timeElapsed,
   matchedCount,
   totalCount,
   onRestart,
 }: GameHeaderProps) {
-  const progress = (matchedCount / totalCount) * 100;
+  const progress = totalCount > 0 ? (matchedCount / totalCount) * 100 : 0;
 
   return (
     <div className="glass-card rounded-2xl p-6 mb-8">
@@ -37,7 +32,7 @@ export default function GameHeader({
           <div className="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5 border border-white/10">
             <Timer className="w-5 h-5 text-accent-gold" />
             <span className="font-display text-2xl font-bold text-white tabular-nums min-w-[64px] text-center">
-              {formatTime(timeElapsed)}
+              {formatTimeDisplay(timeElapsed)}
             </span>
           </div>
 
