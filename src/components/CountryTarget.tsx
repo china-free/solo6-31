@@ -43,26 +43,28 @@ export default function CountryTarget({
     }
   };
 
-  const borderStyle = matchedFlagCode
-    ? isCorrect
-      ? "border-emerald-400/80 ring-2 ring-emerald-400/30 bg-emerald-500/15"
-      : "border-rose-400/80 ring-2 ring-rose-400/30 bg-rose-500/15"
+  const borderStyle = isCorrect
+    ? "border-emerald-400/80 ring-2 ring-emerald-400/30 bg-emerald-500/15"
+    : isWrong
+    ? "border-rose-500/80 ring-2 ring-rose-500/40 bg-rose-500/20"
     : isDragOver
-    ? "drag-over border-accent-gold/60"
+    ? "drag-over border-accent-gold/60 bg-accent-gold/10"
     : "border-white/10 hover:border-white/20 bg-white/3";
 
   return (
     <div
-      className={`country-target ${borderStyle} ${
-        isDragOver && !matchedFlagCode ? "drag-over" : ""
+      className={`country-target ${isWrong ? "animate-shake" : ""} ${borderStyle} ${
+        isDragOver && !matchedFlagCode && !isCorrect && !isWrong ? "drag-over" : ""
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       style={{
-        animation: `slide-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${
-          index * 80
-        }ms backwards`,
+        animation: isWrong
+          ? undefined
+          : `slide-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${
+              index * 80
+            }ms backwards`,
       }}
     >
       <div
@@ -70,14 +72,44 @@ export default function CountryTarget({
       >
         <div
           className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black ${
-            matchedFlagCode
-              ? isCorrect
-                ? "bg-emerald-500 text-white"
-                : "bg-rose-500 text-white"
+            isCorrect
+              ? "bg-emerald-500 text-white"
+              : isWrong
+              ? "bg-rose-500 text-white"
               : "bg-gradient-to-br from-accent-gold to-amber-500 text-slate-900"
           } shadow-lg`}
         >
-          {index + 1}
+          {isCorrect ? (
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : isWrong ? (
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            index + 1
+          )}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -96,6 +128,22 @@ export default function CountryTarget({
               alt="已配对"
               className="w-full h-full object-cover"
             />
+          ) : isWrong ? (
+            <div className="w-full h-full flex items-center justify-center bg-rose-500/30">
+              <svg
+                className="w-7 h-7 text-rose-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-white/20">
               <svg
